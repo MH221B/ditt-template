@@ -1,0 +1,68 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.4.4'
+	id 'io.spring.dependency-management' version '1.1.7'
+	id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+repositories {
+	mavenCentral()
+	maven { url = uri('https://jitpack.io') }
+}
+
+def isDev = project.hasProperty('dev') && project.property('dev') == 'true'
+
+dependencies {
+	if (isDev) {
+		implementation 'org.springframework.boot:spring-boot-starter-web'
+		implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+		implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.0.0'
+		implementation 'com.github.MH221B:ditt-sdk:v1.0.4'
+		implementation 'org.pf4j:pf4j-spring:0.6.0'
+		implementation 'org.pf4j:pf4j:3.6.0'
+		developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	} else {
+		compileOnly 'org.springframework.boot:spring-boot-starter-web'
+		compileOnly 'org.springframework.boot:spring-boot-starter-thymeleaf'
+		compileOnly 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.0.0'
+		compileOnly 'com.github.MH221B:ditt-sdk:v1.0.5'
+		compileOnly 'org.pf4j:pf4j-spring:0.6.0'
+		compileOnly 'org.pf4j:pf4j:3.6.0'
+	}
+	annotationProcessor 'org.pf4j:pf4j:3.6.0'
+	configurations.all {
+    exclude group: 'org.slf4j', module: 'slf4j-reload4j'
+	}
+	// Add additional dependencies if needed
+}
+
+tasks.named('shadowJar') {
+	archiveClassifier.set('plugin') 
+	// Exclude unneeded files
+	exclude('**/static/**')
+	exclude('**/templates/**')
+	exclude('**/test/**')
+	exclude('**/DittTemplateApplication.class')
+}
+// run the program with this command in terminal: ./gradlew bootRun -Pdev=true
+// Steps to prepare the plugin:
+// 1. Run the shadowJar task to build the plugin JAR file:
+//    ./gradlew shadowJar
+// 2. Navigate to the build/libs directory.
+// 3. Create a new folder with the same name as the plugin.
+// 4. Rename the generated JAR file to match the plugin name and move it into the new folder.
+// 5. Copy the CSS, JS, and HTML files (excluding base.html) into the new folder:
+//    - CSS files: src/main/resources/static/css
+//    - JS files: src/main/resources/static/js
+//    - HTML files: src/main/resources/templates (exclude base.html)
+// 6. Zip the folder containing the renamed JAR file and the copied resources.
+// 7. The zipped plugin is now ready for distribution.
