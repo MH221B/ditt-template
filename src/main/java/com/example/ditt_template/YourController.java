@@ -12,10 +12,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.example.ditt_sdk.Service.DevToolExtensionPoint;
+import com.example.ditt_sdk.Service.DevToolController;
 
 @Extension
 @Controller
 @RequestMapping("/your-category")  // Replace with your category name
+@DevToolController(
+    name = "Your Tool Name", // Mandatory, replace with your tool name
+    category = "Your Category",  // Mandatory, replace with your category name
+    description = "Describe your tool here",  // Mandatory, replace with your tool description
+    isPremium = 0,  // optional
+    isEnabled = 1,  // optional
+    pluginFolder = "your-plugin-folder-name" // Mandatory, replace with your plugin folder name
+)
 public class YourController implements DevToolExtensionPoint {
 
     @Autowired
